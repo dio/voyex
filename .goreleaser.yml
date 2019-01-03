@@ -14,3 +14,6 @@ changelog:
     exclude:
       - '^docs'
       - '^refactor'
+
+checksum:
+  name_template: checksums.txt
