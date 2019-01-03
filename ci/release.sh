@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 go mod vendor
-go get -u github.com/gobuffalo/packr/packr
+go get github.com/gobuffalo/packr/packr
 git reset --hard
 packr -z
-curl -xL https://git.io/goreleaser | bash
+curl -sSL https://git.io/goreleaser | bash
