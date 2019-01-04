@@ -1,6 +1,10 @@
 package filter
 
 import (
+	"errors"
+	"os"
+	"path/filepath"
+
 	"github.com/gobuffalo/packr"
 )
 
@@ -11,13 +15,15 @@ var Templates = packr.NewBox("../filter/templates")
 type Generator struct {
 	Name string
 	Type string
+	Root string
 }
 
 // New ...
-func New(name string) (Generator, error) {
+func New(name string, root string) (Generator, error) {
 	g := Generator{
 		Name: name,
 		Type: "http-decoder",
+		Root: root,
 	}
 
 	return g, g.Validate()
@@ -25,5 +31,15 @@ func New(name string) (Generator, error) {
 
 // Validate ...
 func (g Generator) Validate() error {
+	path, err := filepath.Abs(g.Root)
+	if err != nil {
+		return errors.New("root is invalid")
+	}
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return errors.New("root is invalid")
+	}
+	if _, err := os.Stat(filepath.Join(path, "WORKSPACE")); os.IsNotExist(err) {
+		return errors.New("root is invalid")
+	}
 	return nil
 }

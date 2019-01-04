@@ -9,9 +9,16 @@ import (
 
 // FilterCmd ...
 var FilterCmd = &cobra.Command{
-	Use: "filter [name]",
+	Use: "filter name",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		f := newFilter()
+		root, err := cmd.Flags().GetString("root")
+		if err != nil {
+			return errors.WithStack(errors.New("root is required"))
+		}
+		f, err := newFilter(args[0], root)
+		if err != nil {
+			return errors.WithStack(err)
+		}
 		if err := f.Run(makr.Data{}); err != nil {
 			return errors.WithStack(err)
 		}
@@ -19,6 +26,12 @@ var FilterCmd = &cobra.Command{
 	},
 }
 
-func newFilter() filter.Generator {
-	return filter.Generator{}
+func init() {
+	FilterCmd.Flags().StringP("root", "r", "", "root")
 }
+
+func newFilter(name, root string) (filter.Generator, error) {
+	return filter.New(name, root)
+}
+
+

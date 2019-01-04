@@ -1,6 +1,8 @@
 package project
 
 import (
+	"path/filepath"
+
 	"github.com/gobuffalo/buffalo/generators"
 	"github.com/gobuffalo/makr"
 	"github.com/pkg/errors"
@@ -18,5 +20,10 @@ func (a Generator) Run(data makr.Data) error {
 	for _, f := range files {
 		g.Add(makr.NewFile(f.WritePath, f.Body))
 	}
-	return g.Run("/tmp/ok", data)
+
+	root, err := filepath.Abs(a.Project.Name)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	return g.Run(root, data)
 }

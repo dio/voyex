@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"path/filepath"
 	"strings"
 
 	"github.com/gobuffalo/buffalo/generators"
@@ -19,10 +20,11 @@ func (a Generator) Run(data makr.Data) error {
 
 	for _, f := range files {
 		// LOL!
-		writePath := strings.Replace(f.WritePath, "~impl", "basic_auth", 1)
-		writePath = strings.Replace(writePath, "~filter", "basic_auth_filter", 1)
+		writePath := strings.Replace(f.WritePath, "~impl", a.Name, 1)
+		writePath = strings.Replace(writePath, "~filter", a.Name+"_filter", 1)
 		writePath = strings.Replace(writePath, "http/", "", 1)
 		g.Add(makr.NewFile(writePath, f.Body))
 	}
-	return g.Run("/tmp/ok", data)
+	path, _ := filepath.Abs(a.Root)
+	return g.Run(path, data)
 }
